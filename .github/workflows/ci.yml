@@ -37,21 +37,21 @@ jobs:
     - name: Install Node.js dependencies & build
       run: npm install && npm run build
 
-    # Step 6: Test MySQL Connection (Debugging Step)
-    - name: Test MySQL Connection
-      run: |
-        mysql -h ${{ secrets.DB_HOST }} -u ${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "SHOW DATABASES;"
-      continue-on-error: true
+    # Step 6: Set up database environment variables
+    - name: Set up database credentials
+      run: echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
+    - name: Set up database credentials
+      run: echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
+    - name: Set up database credentials
+      run: echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> $GITHUB_ENV
+    - name: Set up database credentials
+      run: echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
+    - name: Set up database credentials
+      run: echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
 
-    # Step 7: Run database migrations
+    # Step 7: Run database migrations (ensure database is accessible)
     - name: Run database migrations
       run: php artisan migrate --force
-      env:
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_PORT: ${{ secrets.DB_PORT }}
-        DB_DATABASE: ${{ secrets.DB_DATABASE }}
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     # Step 8: Deploy the application to a remote server
     - name: Deploy to Remote Server
