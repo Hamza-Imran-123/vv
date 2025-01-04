@@ -37,28 +37,32 @@ jobs:
     - name: Install Node.js dependencies & build
       run: npm install && npm run build
 
-    # Step 6: Run database migrations (ensure database is accessible)
+    # Step 6: Test MySQL connection from GitHub Actions (check if DB is accessible)
+    - name: Test MySQL Connection
+      run: |
+        mysql -h ${{ secrets.DB_HOST }} -u ${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "SHOW DATABASES;"
+      continue-on-error: true  # Continue even if this step fails to not stop the workflow
+
+    # Step 7: Run database migrations (ensure database is accessible)
     - name: Run database migrations
       run: php artisan migrate --force
+      env:
+        DB_HOST: ${{ secrets.DB_HOST }}
+        DB_PORT: ${{ secrets.DB_PORT }}
+        DB_DATABASE: ${{ secrets.DB_DATABASE }}
+        DB_USERNAME: ${{ secrets.DB_USERNAME }}
+        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
-    # Step 7: Deploy the application to a remote server
+    # Step 8: Deploy the application to a remote server
     - name: Deploy to Remote Server
       env:
         HOST: ${{ secrets.SERVER_HOST }}
         USER: ${{ secrets.SERVER_USER }}
         SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_USERNAME: ${{ secrets.DB_USERNAME }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       run: |
-        # Configure SSH key for secure access
         mkdir -p ~/.ssh
         echo "$SSH_KEY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
-        
-        # Deploy the code to the remote server
         rsync -avz --exclude='node_modules' --exclude='.git' ./ $USER@$HOST:/path/to/your/app/
-        
-        # Run necessary commands on the remote server
-        ssh $USER@$HOST 'export DB_HOST=$DB_HOST && export DB_USERNAME=$DB_USERNAME && export DB_PASSWORD=$DB_PASSWORD && cd /path/to/your/app && php artisan migrate --force && php artisan config:cache && php artisan route:cache'
+        ssh $USER@$HOST 'cd /path/to/your/app && php artisan migrate --force && php artisan config:cache && php artisan route:cache'
