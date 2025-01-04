@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-    # Step 4: Run tests
+    # Step 4: Run tests using Pest
     - name: Run tests
-      run: php vendor/bin/phpunit
+      run: php vendor/bin/pest
 
