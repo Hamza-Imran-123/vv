@@ -1,4 +1,4 @@
-name: Laravel CI
+name: PHP CI
 
 on:
   push:
@@ -9,37 +9,25 @@ on:
       - main
 
 jobs:
-  laravel-tests:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code
-      - name: Checkout code
-        uses: actions/checkout@v3
+    # Step 1: Checkout the repository code
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      # Set up PHP
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.1'
-          extensions: mbstring, exif, pcntl, bcmath
-          ini-values: post_max_size=256M, upload_max_filesize=256M
-          coverage: none
+    # Step 2: Set up PHP 8.2
+    - name: Set up PHP 8.2
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
 
-      # Cache dependencies
-      - name: Get Composer Cache
-        id: composer-cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.composer/cache
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-      # Install dependencies
-      - name: Install Dependencies
-        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+    # Step 4: Run tests
+    - name: Run tests
+      run: php vendor/bin/phpunit
 
-      # Run tests
-      - name: Run Tests
-        run: php artisan test
