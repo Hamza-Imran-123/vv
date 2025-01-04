@@ -37,13 +37,13 @@ jobs:
     - name: Install Node.js dependencies & build
       run: npm install && npm run build
 
-    # Step 6: Test MySQL connection from GitHub Actions (check if DB is accessible)
+    # Step 6: Test MySQL Connection (Debugging Step)
     - name: Test MySQL Connection
       run: |
         mysql -h ${{ secrets.DB_HOST }} -u ${{ secrets.DB_USERNAME }} -p${{ secrets.DB_PASSWORD }} -e "SHOW DATABASES;"
-      continue-on-error: true  # Continue even if this step fails to not stop the workflow
+      continue-on-error: true
 
-    # Step 7: Run database migrations (ensure database is accessible)
+    # Step 7: Run database migrations
     - name: Run database migrations
       run: php artisan migrate --force
       env:
