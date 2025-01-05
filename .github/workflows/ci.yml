@@ -39,15 +39,12 @@ jobs:
 
     # Step 6: Set up database environment variables
     - name: Set up database credentials
-      run: echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
-    - name: Set up database credentials
-      run: echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
-    - name: Set up database credentials
-      run: echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> $GITHUB_ENV
-    - name: Set up database credentials
-      run: echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
-    - name: Set up database credentials
-      run: echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
+      run: |
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
+        echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
+        echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> $GITHUB_ENV
+        echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
 
     # Step 7: Run database migrations (ensure database is accessible)
     - name: Run database migrations
