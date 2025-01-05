@@ -48,48 +48,16 @@ jobs:
 
     
 
-    # Step 8: Deploy the application to a remote server
+     # Step 8: Deploy the application to a remote server
     - name: Deploy to Remote Server
-  env:
-    HOST: ${{ secrets.SERVER_HOST }}
-    USER: ${{ secrets.SERVER_USER }}
-    SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
-  run: |
-    # Ensure all required environment variables are set
-    if [ -z "$HOST" ] || [ -z "$USER" ] || [ -z "$SSH_KEY" ]; then
-      echo "Error: HOST, USER, or SSH_KEY is not set." >&2
-      exit 1
-    fi
-
-    # Set up SSH configuration
-    mkdir -p ~/.ssh
-    echo "$SSH_KEY" > ~/.ssh/id_rsa
-    chmod 600 ~/.ssh/id_rsa
-
-    # Add the server to known hosts
-    ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts || {
-      echo "Error: Failed to add $HOST to known_hosts." >&2
-      exit 1
-    }
-
-    # Deploy application files using rsync
-    rsync -avz --exclude='node_modules' --exclude='.git' ./ "$USER@$HOST:/var/www/html/" || {
-      echo "Error: rsync failed. Check SSH connection and paths." >&2
-      exit 1
-    }
-
-    # Run post-deployment tasks on the server (excluding migration)
-    ssh "$USER@$HOST" << EOF
-      cd /var/www/html || {
-        echo "Error: Failed to navigate to application directory." >&2
-        exit 1
-      }
-      php artisan config:cache || {
-        echo "Error: Failed to cache configuration." >&2
-        exit 1
-      }
-      php artisan route:cache || {
-        echo "Error: Failed to cache routes." >&2
-        exit 1
-      }
-EOF
+      env:
+        HOST: ${{ secrets.SERVER_HOST }}
+        USER: ${{ secrets.SERVER_USER }}
+        SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      run: |
+        mkdir -p ~/.ssh
+        echo "$SSH_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+        rsync -avz --exclude='node_modules' --exclude='.git' ./ $USER@$HOST:/path/to/your/app/
+        ssh $USER@$HOST 'cd /path/to/your/app && php artisan migrate --force && php artisan config:cache && php artisan route:cache'        
