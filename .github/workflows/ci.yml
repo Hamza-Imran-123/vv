@@ -46,9 +46,7 @@ jobs:
         echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
         echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
 
-    # Step 7: Run database migrations (ensure database is accessible)
-    - name: Run database migrations
-      run: php artisan migrate --force
+    
 
     # Step 8: Deploy the application to a remote server
     - name: Deploy to Remote Server
