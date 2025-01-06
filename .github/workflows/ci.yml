@@ -18,7 +18,7 @@ jobs:
       DB_USER: "admin"
       DB_HOST: "database-2.c5essse68gdr.us-east-1.rds.amazonaws.com"
       DB_PASS: "HamzaImran12345"
-      DB_PORT: 3306
+      DB_PORT: "3306"
       DB: "database-2"
 
     steps:
