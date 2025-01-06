@@ -16,11 +16,6 @@ jobs:
       HOST: "ec2-52-23-238-3.compute-1.amazonaws.com"
       USER: "ubuntu" 
       PATH: "/home/ubuntu/vv/"
-      DB_USER: "admin"
-      DB_HOST: "database-2.c5essse68gdr.us-east-1.rds.amazonaws.com"
-      DB_PASS: "HamzaImran12345"
-      DB_PORT: "3306"
-      DB: "database-2"
 
     steps:
     # Step 1: Checkout the repository code
@@ -71,7 +66,7 @@ jobs:
         ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
         
         # Rsync and run commands on remote server
-        rsync -avz --exclude='node_modules' --exclude='.git' ./ "$USER@$HOST:/home/ubuntu/vv" && \
+        rsync -avz --exclude='node_modules' --exclude='.git' ./ "$USER@$HOST: /home/ubuntu/vv" && \
         ssh "$USER@$HOST" 'cd /home/ubuntu/vv && php artisan migrate --force && php artisan config:cache && php artisan route:cache' || \
         { echo "Deployment failed"; exit 1; }
         
