@@ -24,7 +24,7 @@ jobs:
     steps:
     # Step 1: Checkout the repository code
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
     # Step 2: Set up PHP 8.2
     - name: Set up PHP 8.2
