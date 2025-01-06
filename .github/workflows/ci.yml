@@ -18,9 +18,7 @@ jobs:
       PATH: "/home/ubuntu/vv/"
 
     steps:
-    # Step 1: Checkout the repository code
-    - name: Install tar
-      run: apt-get update && apt-get install -y tar
+
       
     - name: Checkout code
       uses: actions/checkout@v2
