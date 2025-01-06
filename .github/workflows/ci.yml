@@ -55,9 +55,19 @@ jobs:
         USER: ${{ secrets.SERVER_USER }}
         SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
       run: |
-        mkdir -p ~/.ssh
-        echo "$SSH_KEY" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
-        rsync -avz --exclude='node_modules' --exclude='.git' ./ $USER@$HOST:/home/ubuntu/vv
-        ssh $USER@$HOST 'cd /home/ubuntu/vv && php artisan migrate --force && php artisan config:cache && php artisan route:cache'        
+        #!/bin/bash
+
+        # Ensure SSH directory and key
+        mkdir -p ~/.ssh && echo "$SSH_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+        
+        # Add host to known_hosts and check variables
+        [ -z "$SSH_KEY" ] && echo "SSH_KEY is not set" && exit 1
+        [ -z "$HOST" ] && echo "HOST is not set" && exit 1
+        ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
+        
+        # Rsync and run commands on remote server
+        rsync -avz --exclude='node_modules' --exclude='.git' ./ "$USER@$HOST:/home/ubuntu/vv" && \
+        ssh "$USER@$HOST" 'cd /home/ubuntu/vv && php artisan migrate --force && php artisan config:cache && php artisan route:cache' || \
+        { echo "Deployment failed"; exit 1; }
+        
+        echo "Deployment completed!"
