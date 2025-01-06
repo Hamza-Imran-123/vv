@@ -49,7 +49,7 @@ jobs:
     
     
 
-     # Step 8: Deploy the application to a remote server
+    # Step 8: Deploy the application to a remote server
     - name: Deploy to Remote Server
       env:
         HOST: ${{ env.HOST }}
