@@ -9,17 +9,11 @@ on:
       - main
 
 jobs:
-  deploy:
-    name: deployy
+  build:
     runs-on: ubuntu-latest
-    env:
-      HOST: "ec2-52-23-238-3.compute-1.amazonaws.com"
-      USER: "ubuntu" 
-      PATH: "/home/ubuntu/vv/"
 
     steps:
-
-      
+    # Step 1: Checkout the repository code
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -43,29 +37,25 @@ jobs:
     - name: Install Node.js dependencies & build
       run: npm install && npm run build
 
-    
-    
+    # Step 6: Set up database credentials
+    - name: Set up database credentials
+      run: |
+        echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
+        echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
+        echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> $GITHUB_ENV
+        echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
 
-    # Step 8: Deploy the application to a remote server
+    # Step 7: Deploy the application to a remote server
     - name: Deploy to Remote Server
       env:
-        HOST: ${{ env.HOST }}
-        USER: ${{ env.USER }}
-        SSH_KEY: ${{ secrets.SECRETS }}
+        HOST: ${{ secrets.SERVER_HOST }}
+        USER: ${{ secrets.SERVER_USER }}
+        SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
       run: |
-        
-
-        # Ensure SSH directory and key
-        mkdir -p ~/.ssh && echo "$SSH_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-        
-        # Add host to known_hosts and check variables
-        [ -z "$SSH_KEY" ] && echo "SSH_KEY is not set" && exit 1
-        [ -z "$HOST" ] && echo "HOST is not set" && exit 1
-        ssh-keyscan -H "$HOST" >> ~/.ssh/known_hosts
-        
-        # Rsync and run commands on remote server
-        rsync -avz --exclude='node_modules' --exclude='.git' ./ "$USER@$HOST: /home/ubuntu/vv" && \
-        ssh "$USER@$HOST" 'cd /home/ubuntu/vv && php artisan migrate --force && php artisan config:cache && php artisan route:cache' || \
-        { echo "Deployment failed"; exit 1; }
-        
-        echo "Deployment completed!"
+        mkdir -p ~/.ssh
+        echo "$SSH_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+        rsync -avz --exclude='node_modules' --exclude='.git' ./ $USER@$HOST:/home/ubuntu/vv
+        ssh $USER@$HOST 'cd /home/ubuntu/vv && php artisan config:cache && php artisan route:cache'
