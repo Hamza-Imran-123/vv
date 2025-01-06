@@ -11,6 +11,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HOST: "52.23.238.3"
+      USER: "ubuntu" 
+      PATH: "/home/ubuntu/vv/"
+      DB_USER: "admin"
+      DB_HOST: "database-2.c5essse68gdr.us-east-1.rds.amazonaws.com"
+      DB_PASS: "HamzaImran12345"
+      DB_PORT: 3306
+      DB: "database-2"
 
     steps:
     # Step 1: Checkout the repository code
@@ -37,23 +46,15 @@ jobs:
     - name: Install Node.js dependencies & build
       run: npm install && npm run build
 
-    # Step 6: Set up database environment variables
-    - name: Set up database credentials
-      run: |
-        echo "DB_HOST=${{ secrets.DB_HOST }}" >> $GITHUB_ENV
-        echo "DB_PORT=${{ secrets.DB_PORT }}" >> $GITHUB_ENV
-        echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> $GITHUB_ENV
-        echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
-        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
-
+    
     
 
      # Step 8: Deploy the application to a remote server
     - name: Deploy to Remote Server
       env:
-        HOST: ${{ secrets.SERVER_HOST }}
-        USER: ${{ secrets.SERVER_USER }}
-        SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        HOST: ${{ env.HOST }}
+        USER: ${{ env.USER }}
+        SSH_KEY: ${{ secrets.SECRETS }}
       run: |
         
 
