@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      HOST: "52.23.238.3"
+      HOST: "ec2-52-23-238-3.compute-1.amazonaws.com"
       USER: "ubuntu" 
       PATH: "/home/ubuntu/vv/"
       DB_USER: "admin"
