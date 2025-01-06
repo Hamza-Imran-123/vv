@@ -10,6 +10,7 @@ on:
 
 jobs:
   deploy:
+    name: deployy
     runs-on: ubuntu-latest
     env:
       HOST: "ec2-52-23-238-3.compute-1.amazonaws.com"
