@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <<<<<<< HEAD
 <<<<<<< HEAD
-    <title>clonenetflixx</title>
+    <title>clone</title>
 =======
     <title>netflixxx</title>
 >>>>>>> ab4eebb (commit message describing the changes)
